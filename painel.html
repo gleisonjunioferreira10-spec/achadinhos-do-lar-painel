@@ -407,28 +407,11 @@ let state = carregar();
 
 /* ---------- ofertas curadas ---------- */
 /* Atualizar esta linha sempre que o array `ofertas` abaixo for substituído (curadoria manual ou automática) */
-const DATA_GERACAO_OFERTAS = "13/07/2026 — substituição manual (item #3)";
+const DATA_GERACAO_OFERTAS = "13/07/2026 — curadoria manual (3 itens verificados; rodada reduzida por instabilidade técnica do dia, ver README)";
 const ofertas = [
-  {id:1, nome:"Panela de Pressão Elétrica Philco PPP01P 6L", plataforma:"Mercado Livre", subnicho:"Cozinha", de:549.90, por:367.00, desconto:33, comissao:13, avaliacao:4.8, link:"https://meli.la/1NsyBL1"},
-  {id:2, nome:"Air Fryer Oven Philco 11L 8 Funções PAF11B", plataforma:"Mercado Livre", subnicho:"Cozinha", de:530.45, por:349.00, desconto:34, comissao:13, avaliacao:4.9, link:"https://meli.la/1QzF3vV"},
-  {id:3, nome:"Caixa Cesto Organizador De Tecido Linho Dobrável 45x35x25 Cor Cinza (Incasa)", plataforma:"Mercado Livre", subnicho:"Organização", de:78.99, por:56.63, desconto:28, comissao:13, avaliacao:4.8, link:"https://meli.la/1Nww5NZ"},
-  {id:4, nome:"Vaso Sanitário Tubrax Monobloco VAB0002", plataforma:"Mercado Livre", subnicho:"Banheiro e Lavanderia", de:894.00, por:509.90, desconto:42, comissao:13, avaliacao:4.9, link:"https://meli.la/2GR9RJM"},
-  {id:5, nome:"Carrinho Organizador Móvel 4 Andares Multiuso", plataforma:"Shopee", subnicho:"Organização", de:99.94, por:33.98, desconto:66, comissao:15, avaliacao:4.8},
-  {id:6, nome:"Organizador de Guarda-Roupa Dobrável Grande MC01", plataforma:"Shopee", subnicho:"Organização", de:30.12, por:21.99, desconto:27, comissao:15, avaliacao:5.0},
-  {id:7, nome:"Organizador Dobrável 24 Compartimentos p/ Íntimas", plataforma:"Shopee", subnicho:"Organização", de:34.98, por:17.49, desconto:50, comissao:15, avaliacao:5.0},
-  {id:8, nome:"Caixa de Armazenamento de Roupas Grade Dobrável", plataforma:"Shopee", subnicho:"Organização", de:49.47, por:18.80, desconto:62, comissao:15, avaliacao:4.9},
-  {id:9, nome:"Kit Caixa Organizadora Dobrável PVC (2/4/6un)", plataforma:"Shopee", subnicho:"Organização", de:64.44, por:29.00, desconto:55, comissao:15, avaliacao:4.9},
-  {id:10, nome:"Caixas Organizadoras Dobrável Tampa Transparente Oxford", plataforma:"Shopee", subnicho:"Organização", de:50.12, por:21.55, desconto:57, comissao:15, avaliacao:5.0},
-  {id:11, nome:"Organizador 4/6 Andares Multiuso p/ Bolsas e Cosméticos", plataforma:"Shopee", subnicho:"Organização", de:59.50, por:24.99, desconto:58, comissao:15, avaliacao:4.9},
-  {id:12, nome:"Cesto Suspenso Aramado Organizador de Cozinha", plataforma:"Shopee", subnicho:"Cozinha", de:42.24, por:29.99, desconto:29, comissao:15, avaliacao:4.8},
-  {id:13, nome:"Kit Potes de Mantimentos para Cozinha Decorados (9 peças)", plataforma:"Shopee", subnicho:"Cozinha", de:90.58, por:29.89, desconto:67, comissao:15, avaliacao:4.8},
-  {id:14, nome:"Fruteira 3 Cestos de Cozinha Preta, Base MDF Amadeirado", plataforma:"Shopee", subnicho:"Cozinha", de:199.82, por:113.90, desconto:43, comissao:15, avaliacao:4.7},
-  {id:15, nome:"Mimo Style Porta Talheres Ecokitchen (bambu)", plataforma:"Amazon", subnicho:"Cozinha", de:89.54, por:39.34, desconto:56, comissao:9, avaliacao:4.7, link:"https://www.amazon.com.br/dp/B07BJK1HCR?tag=achadinh05ba5-20"},
-  {id:16, nome:"Organizador de Geladeira com Cesto 5L Natural (Clear Fresh)", plataforma:"Amazon", subnicho:"Cozinha", de:75.28, por:44.99, desconto:40, comissao:9, avaliacao:4.6, link:"https://www.amazon.com.br/dp/B08Y5LKM6W?tag=achadinh05ba5-20"},
-  {id:17, nome:"Kit 3 Caixas Organizadoras 4L com Tampa de Bambu (Oikos)", plataforma:"Amazon", subnicho:"Organização", de:122.30, por:79.90, desconto:35, comissao:9, avaliacao:4.6},
-  {id:18, nome:"Caixa Organizadora com Tampa de Bambu 4L (Oikos)", plataforma:"Amazon", subnicho:"Organização", de:49.90, por:31.90, desconto:36, comissao:9, avaliacao:4.6},
-  {id:19, nome:"Porta Talheres Expansível Organizador de Gaveta (8 divisórias)", plataforma:"Amazon", subnicho:"Cozinha", de:59.89, por:44.89, desconto:25, comissao:9, avaliacao:4.8, link:"https://www.amazon.com.br/dp/B0G44WD5Q1?tag=achadinh05ba5-20"},
-  {id:20, nome:"Organizador com Cesto 650ml Transparente (Clear Fresh)", plataforma:"Amazon", subnicho:"Cozinha", de:42.96, por:24.00, desconto:44, comissao:9, avaliacao:4.6},
+  {id:1, nome:"Armário Guarda Roupa Organizador Dobrável Desmontável Cor Cinza", plataforma:"Mercado Livre", subnicho:"Organização", de:142.50, por:98.69, desconto:30, comissao:13, avaliacao:4.5, link:"https://meli.la/22uizcr"},
+  {id:2, nome:"Kit 4 Caixas Organizadoras Dobráveis Com Alça Em Couro (HW)", plataforma:"Mercado Livre", subnicho:"Organização", de:129.00, por:60.63, desconto:53, comissao:13, avaliacao:4.7, link:"https://meli.la/2kPEi7w"},
+  {id:3, nome:"Kit 9 Potes Mantimentos Vidro Herméticos Bambu (Epsilon EPS-709)", plataforma:"Mercado Livre", subnicho:"Cozinha", de:179.90, por:97.15, desconto:45, comissao:13, avaliacao:4.8, link:"https://meli.la/2eYVhb2"},
 ];
 
 /* ---------- utilidades ---------- */
