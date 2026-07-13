@@ -93,10 +93,29 @@
   .config-item:last-child{border-bottom:none;}
   .toggle{width:16px;height:16px;}
   small.hint{color:var(--muted);font-size:12px;display:block;margin-top:6px;}
+  #loginGate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;}
+  #loginGate.hidden{display:none;}
+  .loginBox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;max-width:340px;width:100%;text-align:center;}
+  .loginBox h2{margin:0 0 6px;font-size:17px;}
+  .loginBox p{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .loginBox input{width:100%;margin-bottom:10px;text-align:center;}
+  .loginBox button{width:100%;}
+  .loginErro{color:#c0392b;font-size:12px;margin-top:8px;display:none;}
 </style>
 </head>
 <body>
 
+<div id="loginGate">
+  <div class="loginBox">
+    <h2>🏠 Achadinhos do Lar</h2>
+    <p>Painel restrito — digite a senha de acesso.</p>
+    <input type="password" id="senhaInput" placeholder="Senha" autocomplete="off">
+    <button class="primary" id="btnEntrar" type="button">Entrar</button>
+    <div class="loginErro" id="loginErro">Senha incorreta.</div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
 <header>
   <h1>🏠 Achadinhos do Lar — Painel</h1>
   <div class="sub" id="dataAtual"></div>
@@ -275,8 +294,34 @@
     </div>
   </section>
 </main>
+</div>
 
 <script>
+/* ---------- acesso (aviso: proteção só contra acesso casual — qualquer pessoa que veja o código-fonte encontra a senha; não é segurança de verdade) ---------- */
+(function(){
+  const SENHA = "AchadinhosLar2026";
+  const gate = document.getElementById('loginGate');
+  const app = document.getElementById('app');
+  function liberar(){
+    gate.classList.add('hidden');
+    app.style.display = 'block';
+  }
+  if(sessionStorage.getItem('achadinhosAuth') === 'ok'){
+    liberar();
+  }
+  document.getElementById('btnEntrar').addEventListener('click', tentar);
+  document.getElementById('senhaInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') tentar(); });
+  function tentar(){
+    const valor = document.getElementById('senhaInput').value;
+    if(valor === SENHA){
+      sessionStorage.setItem('achadinhosAuth', 'ok');
+      liberar();
+    } else {
+      document.getElementById('loginErro').style.display = 'block';
+    }
+  }
+})();
+
 /* ---------- estado ---------- */
 const STORAGE_KEY = 'achadinhosDoLarState';
 function estadoPadrao(){
