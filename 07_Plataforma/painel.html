@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Achadinhos do Lar — Painel</title>
+<style>
+  :root{
+    --bg:#faf7f2; --card:#fff; --ink:#2b2320; --muted:#8a7f76;
+    --accent:#e8622c; --accent-d:#c94f1f; --accent2:#2f9e6f; --accent2-d:#227a55;
+    --line:#ece3d8; --warn:#7a4a1c; --warnbg:#fff4ea; --warnline:#f0c8a6;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);margin:0;padding:0 0 40px;}
+  header{padding:20px 24px 0;}
+  h1{font-size:20px;margin:0 0 2px;}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:16px;}
+  main{padding:0 24px;max-width:1100px;margin:0 auto;}
+
+  nav{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:20px;overflow-x:auto;}
+  nav button{background:none;border:none;padding:10px 14px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+  nav button.active{color:var(--accent-d);border-bottom-color:var(--accent);}
+
+  .tab{display:none;}
+  .tab.active{display:block;}
+
+  .banner{background:var(--warnbg);border:1px solid var(--warnline);color:var(--warn);padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:20px;}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px;}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px;}
+  .kpi .value{font-size:22px;font-weight:700;}
+  .kpi .value.accent{color:var(--accent-d);}
+  .kpi .value.green{color:var(--accent2-d);}
+
+  .progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:24px;}
+  .progress-track{background:#f1e9de;border-radius:999px;height:14px;overflow:hidden;margin-top:8px;}
+  .progress-fill{background:linear-gradient(90deg,var(--accent2),var(--accent2-d));height:100%;border-radius:999px;transition:width .3s;}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;position:relative;}
+  .card.selected{border-color:var(--accent2);box-shadow:0 0 0 2px rgba(47,158,111,.15);}
+  .card.invalido{opacity:.6;border-color:#c0392b;}
+  .badge{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:#eee;color:#555;margin-bottom:8px;margin-right:4px;}
+  .badge.shopee{background:#ffe3d6;color:#c94f1f;}
+  .badge.ml{background:#fff3c4;color:#8a6d00;}
+  .badge.amazon{background:#ffe9b3;color:#8a5a00;}
+  .badge.magalu{background:#e4d8ff;color:#5a3ec9;}
+  .badge.numero{background:var(--ink);color:#fff;}
+  .badge.postado{background:#2f6fbd;color:#fff;}
+  .nome{font-weight:600;font-size:14px;margin:4px 0 8px;line-height:1.3;}
+  .precos{font-size:13px;margin-bottom:6px;}
+  .de{text-decoration:line-through;color:var(--muted);margin-right:6px;}
+  .por{color:var(--accent);font-weight:700;}
+  .meta{font-size:11px;color:var(--muted);margin-bottom:10px;}
+  .check{position:absolute;top:12px;right:12px;width:18px;height:18px;}
+
+  .bar{position:sticky;bottom:0;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-top:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  button.primary{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;}
+  button.primary:disabled{background:#ddd;cursor:not-allowed;}
+  button.secondary{background:var(--accent2);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;}
+  button.ghost{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;color:var(--muted);}
+  button.danger{background:none;border:none;color:#c94f1f;cursor:pointer;font-size:12px;}
+
+  .out{margin-top:20px;display:none;}
+  .out.show{display:block;}
+  .chan{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px;}
+  .chan h3{margin:0 0 8px;font-size:14px;}
+  textarea{width:100%;min-height:120px;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:10px;resize:vertical;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:20px;}
+  .panel h2{font-size:15px;margin:0 0 14px;}
+  form.inline{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:16px;}
+  form.inline label{display:flex;flex-direction:column;font-size:11px;color:var(--muted);gap:4px;}
+  input,select{font-family:inherit;font-size:13px;padding:7px 9px;border:1px solid var(--line);border-radius:7px;background:#fffdfb;}
+
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);}
+  th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.03em;}
+  tr:last-child td{border-bottom:none;}
+  .status-pill{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600;}
+  .status-pago{background:#dcf5e8;color:var(--accent2-d);}
+  .status-pendente{background:#fff3d6;color:#8a6d00;}
+
+  .hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:13px;}
+  .hbar-label{width:150px;flex-shrink:0;color:var(--muted);}
+  .hbar-track{flex:1;background:#f1e9de;border-radius:6px;height:16px;overflow:hidden;}
+  .hbar-fill{background:var(--accent);height:100%;}
+  .hbar-value{width:90px;text-align:right;font-weight:600;flex-shrink:0;}
+
+  .checklist label{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;}
+  .config-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .config-item:last-child{border-bottom:none;}
+  .toggle{width:16px;height:16px;}
+  small.hint{color:var(--muted);font-size:12px;display:block;margin-top:6px;}
+  #loginGate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px;}
+  #loginGate.hidden{display:none;}
+  .loginBox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:28px;max-width:340px;width:100%;text-align:center;}
+  .loginBox h2{margin:0 0 6px;font-size:17px;}
+  .loginBox p{color:var(--muted);font-size:13px;margin:0 0 16px;}
+  .loginBox input{width:100%;margin-bottom:10px;text-align:center;}
+  .loginBox button{width:100%;}
+  .loginErro{color:#c0392b;font-size:12px;margin-top:8px;display:none;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+  .toolbar select{padding:6px 8px;}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:10000;}
+  #toast.show{opacity:1;}
+  .insight{background:#eef7f1;border:1px solid #cfe9d9;color:#1d5c3a;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;}
+</style>
+</head>
+<body>
+
+<div id="loginGate">
+  <div class="loginBox">
+    <h2>🏠 Achadinhos do Lar</h2>
+    <p>Painel restrito — digite a senha de acesso.</p>
+    <input type="password" id="senhaInput" placeholder="Senha" autocomplete="off">
+    <button class="primary" id="btnEntrar" type="button">Entrar</button>
+    <div class="loginErro" id="loginErro">Senha incorreta.</div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<div id="app" style="display:none">
+<header>
+  <h1>🏠 Achadinhos do Lar — Painel</h1>
+  <div class="sub" id="dataAtual"></div>
+</header>
+
+<main>
+  <nav id="tabs">
+    <button data-tab="resumo" class="active">Resumo</button>
+    <button data-tab="produtos">Produtos do Dia</button>
+    <button data-tab="vendas">Vendas</button>
+    <button data-tab="financeiro">Financeiro</button>
+    <button data-tab="crescimento">Crescimento</button>
+    <button data-tab="config">Configurações</button>
+  </nav>
+
+  <!-- RESUMO -->
+  <section class="tab active" id="tab-resumo">
+    <div class="cards">
+      <div class="kpi"><div class="label">Ofertas selecionadas hoje</div><div class="value accent" id="kpiSelecionadas">0</div></div>
+      <div class="kpi"><div class="label">Vendas registradas (mês)</div><div class="value" id="kpiVendasMes">0</div></div>
+      <div class="kpi"><div class="label">Comissão do mês</div><div class="value green" id="kpiComissaoMes">R$ 0,00</div></div>
+      <div class="kpi"><div class="label">Seguidores atuais</div><div class="value accent" id="kpiSeguidores">0</div></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div style="display:flex;justify-content:space-between;font-size:13px;">
+        <span>Meta de seguidores — dezembro/2026</span>
+        <span id="progressoTexto">0 / 100.000</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressoFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="insight" id="insightSubnicho" style="display:none;"></div>
+
+    <div class="panel">
+      <h2>Ações da semana</h2>
+      <div class="checklist" id="checklistResumo"></div>
+      <small class="hint">Editável na aba Crescimento. Fonte: 04_Crescimento/plano_crescimento.md</small>
+    </div>
+  </section>
+
+  <!-- PRODUTOS DO DIA -->
+  <section class="tab" id="tab-produtos">
+    <div class="banner">
+      <strong>Curadoria real.</strong> Última atualização: <span id="dataGeracaoOfertas">—</span>. Cada card mostra o número (#) e se já foi <span class="badge postado" style="margin:0 2px;">postado</span> ou está em aberto.
+      <strong>Envie cada oferta como mensagem separada</strong> no WhatsApp — colar duas juntas faz só a primeira gerar preview/imagem do link. Ao clicar "Copiar WhatsApp" de uma oferta, ela já é marcada como postada automaticamente (dá pra desmarcar no card).
+    </div>
+    <div class="toolbar">
+      <select id="filtroPlataforma">
+        <option value="">Todas as plataformas</option>
+        <option value="Mercado Livre">Mercado Livre</option>
+        <option value="Shopee">Shopee</option>
+        <option value="Amazon">Amazon</option>
+        <option value="Magalu">Magalu</option>
+      </select>
+      <select id="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="aberto">Só em aberto</option>
+        <option value="postado">Só postados</option>
+        <option value="linkPronto">Só com link pronto</option>
+      </select>
+      <select id="ordenarPor">
+        <option value="">Ordem padrão (#)</option>
+        <option value="desconto">Maior desconto</option>
+        <option value="comissao">Maior comissão</option>
+        <option value="por">Menor preço</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="bar">
+      <span id="contador">0 ofertas selecionadas</span>
+      <button class="primary" id="btnGerar" disabled>Gerar pacote de disparo</button>
+    </div>
+    <div class="out" id="out">
+      <div class="banner" style="margin-bottom:14px;">📌 Copie e cole <strong>uma oferta de cada vez</strong> no WhatsApp — cada mensagem separada gera seu próprio preview/imagem do link.</div>
+      <div id="outList"></div>
+    </div>
+  </section>
+
+  <!-- VENDAS -->
+  <section class="tab" id="tab-vendas">
+    <div class="panel">
+      <h2>Registrar venda</h2>
+      <form class="inline" id="formVenda">
+        <label>Data<input type="date" id="vData" required></label>
+        <label>Produto<input type="text" id="vProduto" placeholder="Nome do produto" required></label>
+        <label>Plataforma
+          <select id="vPlataforma">
+            <option>Shopee</option><option>Mercado Livre</option><option>Amazon</option><option>Magalu</option>
+          </select>
+        </label>
+        <label>Sub-nicho
+          <select id="vSubnicho">
+            <option>Organização</option><option>Cozinha</option><option>Decoração</option><option>Jardim</option><option>Banheiro e Lavanderia</option><option>Móveis</option><option>Casa Inteligente</option>
+          </select>
+        </label>
+        <label>Valor da venda (R$)<input type="number" step="0.01" id="vValor" placeholder="0,00" required></label>
+        <label>Comissão (%)<input type="number" step="0.1" id="vComissaoPct" placeholder="ex: 15"></label>
+        <label>Status
+          <select id="vStatus"><option value="pendente">Pendente</option><option value="pago">Pago</option></select>
+        </label>
+        <button type="submit" class="primary">Adicionar</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h2>Histórico de vendas</h2>
+      <table id="tabelaVendas">
+        <thead><tr><th>Data</th><th>Produto</th><th>Plataforma</th><th>Sub-nicho</th><th>Valor</th><th>Comissão</th><th>Status</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <small class="hint" id="vendasVazio">Nenhuma venda registrada ainda.</small>
+    </div>
+  </section>
+
+  <!-- FINANCEIRO -->
+  <section class="tab" id="tab-financeiro">
+    <div class="cards">
+      <div class="kpi"><div class="label">Comissão total (pago)</div><div class="value green" id="finPago">R$ 0,00</div></div>
+      <div class="kpi"><div class="label">Comissão total (pendente)</div><div class="value accent" id="finPendente">R$ 0,00</div></div>
+      <div class="kpi"><div class="label">Total vendido (bruto)</div><div class="value" id="finBruto">R$ 0,00</div></div>
+    </div>
+    <div class="panel">
+      <h2>Comissão por plataforma</h2>
+      <div id="finPorPlataforma"></div>
+      <small class="hint" id="finVazio">Sem vendas registradas ainda — cadastre na aba Vendas.</small>
+    </div>
+    <div class="panel">
+      <h2>Comissão por sub-nicho</h2>
+      <div id="finPorSubnicho"></div>
+      <small class="hint" id="finSubnichoVazio">Sem vendas registradas ainda — cadastre na aba Vendas.</small>
+      <small class="hint">Base para o balanço semanal em regras_curadoria.md — mostra qual sub-nicho está convertendo mais.</small>
+    </div>
+    <div class="panel">
+      <h2>Faixas de comissão de referência</h2>
+      <table>
+        <thead><tr><th>Plataforma</th><th>Categoria</th><th>Faixa</th></tr></thead>
+        <tbody>
+          <tr><td>Shopee</td><td>Casa &amp; Decoração</td><td>10% a 18%</td></tr>
+          <tr><td>Mercado Livre</td><td>Casa, Móveis e Decoração</td><td>12% a 14% (até 19% Premium)</td></tr>
+          <tr><td>Magalu</td><td>Casa / móveis (vendido pelo Magalu)</td><td>até 12% (marketplace: até 3%)</td></tr>
+          <tr><td>Amazon</td><td>Casa e Cozinha</td><td>8% a 10%</td></tr>
+        </tbody>
+      </table>
+      <small class="hint">Fonte: 00_Configuracao/comissoes_referencia.md — confirmar valor exato no painel de cada plataforma.</small>
+    </div>
+  </section>
+
+  <!-- CRESCIMENTO -->
+  <section class="tab" id="tab-crescimento">
+    <div class="panel">
+      <h2>Registrar contagem de seguidores</h2>
+      <form class="inline" id="formSeguidores">
+        <label>Data<input type="date" id="sData" required></label>
+        <label>Seguidores<input type="number" id="sQuantidade" placeholder="0" required></label>
+        <button type="submit" class="primary">Registrar</button>
+      </form>
+    </div>
+    <div class="panel">
+      <h2>Histórico</h2>
+      <table id="tabelaSeguidores">
+        <thead><tr><th>Data</th><th>Seguidores</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <small class="hint" id="seguidoresVazio">Nenhum registro ainda.</small>
+    </div>
+    <div class="panel">
+      <h2>Ações da semana (12/07 a 18/07/2026)</h2>
+      <div class="checklist" id="checklistCrescimento"></div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section class="tab" id="tab-config">
+    <div class="panel">
+      <h2>Status de cadastro de afiliado</h2>
+      <div id="configAfiliados"></div>
+      <small class="hint">Só marca status — os IDs reais ficam em 00_Configuracao/credenciais_afiliado.md, não aqui.</small>
+    </div>
+    <div class="panel">
+      <h2>Regras de curadoria (resumo)</h2>
+      <ul style="font-size:13px;line-height:1.7;">
+        <li>Desconto real ≥ 25%</li>
+        <li>Avaliação ≥ 4.0</li>
+        <li>Vendedor confiável</li>
+        <li>Dentro do nicho: casa, decoração, organização, jardim (sub-nichos: cozinha, banheiro/lavanderia, móveis, casa inteligente)</li>
+        <li>Prioridade: Shopee &gt; Mercado Livre &gt; Magalu &gt; Amazon (comissão, em empate de qualidade)</li>
+        <li>Balanço semanal: mais peso pros sub-nichos que mais converterem em vendas</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h2>Template de post</h2>
+      <textarea readonly style="min-height:140px;">🏠 [FRASE DE GANCHO CURTA]
+**[Nome do Produto]**
+💸 DE: R$ XXX,XX
+🔥 POR: R$ XX,XX
+💳 ou em Xx de R$ XX,XX sem juros
+🔗 [link de afiliado]
+⚠️ Preço e estoque sujeitos a alteração. #publicidade</textarea>
+    </div>
+    <div class="panel">
+      <h2>Backup dos dados</h2>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 12px;">Vendas, seguidores, checklist e status de postado ficam salvos só neste navegador (localStorage). Baixe um backup de vez em quando pra não perder nada.</p>
+      <button class="secondary" id="btnBackupBaixar" type="button">⬇️ Baixar backup (.json)</button>
+      <input type="file" id="backupArquivo" accept="application/json" style="display:none;">
+      <button class="ghost" id="btnBackupRestaurar" type="button" style="margin-left:8px;">⬆️ Restaurar backup</button>
+    </div>
+    <div class="panel">
+      <h2>Segurança do painel</h2>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 12px;">⚠️ Lembrete: essa senha só bloqueia acesso casual — quem vir o código-fonte da página consegue contornar. Não é segurança de verdade, só uma barreira simples.</p>
+      <form class="inline" id="formSenha">
+        <label>Nova senha<input type="text" id="novaSenha" placeholder="Nova senha"></label>
+        <button type="submit" class="primary">Salvar nova senha</button>
+      </form>
+    </div>
+  </section>
+</main>
+</div>
+
+<script>
+/* ---------- acesso (aviso: proteção só contra acesso casual — qualquer pessoa que veja o código-fonte encontra a senha; não é segurança de verdade) ---------- */
+const SENHA_PADRAO = "AchadinhosLar2026";
+function senhaAtual(){ return localStorage.getItem('achadinhosSenhaCustom') || SENHA_PADRAO; }
+(function(){
+  const gate = document.getElementById('loginGate');
+  const app = document.getElementById('app');
+  function liberar(){
+    gate.classList.add('hidden');
+    app.style.display = 'block';
+  }
+  if(sessionStorage.getItem('achadinhosAuth') === 'ok'){
+    liberar();
+  }
+  document.getElementById('btnEntrar').addEventListener('click', tentar);
+  document.getElementById('senhaInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') tentar(); });
+  function tentar(){
+    const valor = document.getElementById('senhaInput').value;
+    if(valor === senhaAtual()){
+      sessionStorage.setItem('achadinhosAuth', 'ok');
+      liberar();
+    } else {
+      document.getElementById('loginErro').style.display = 'block';
+    }
+  }
+})();
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('show'), 2200);
+}
+
+/* ---------- estado ---------- */
+const STORAGE_KEY = 'achadinhosDoLarState';
+function estadoPadrao(){
+  return {
+    vendas: [],
+    seguidores: [],
+    metaSeguidores: 100000,
+    selecionados: [],
+    postados: {},
+    checklist: {
+      'Postar Story pessoal com print de oferta real': false,
+      'Enviar convite pra 2–3 grupos de família/amigos': false,
+      'Definir e anunciar horário da oferta relâmpago de sexta': false,
+    },
+    afiliados: { Amazon:false, Shopee:false, 'Mercado Livre':false, Magalu:false }
+  };
+}
+function carregar(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return estadoPadrao();
+    return Object.assign(estadoPadrao(), JSON.parse(raw));
+  }catch(e){ return estadoPadrao(); }
+}
+function salvar(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+let state = carregar();
+
+/* ---------- ofertas curadas ---------- */
+/* Atualizar esta linha sempre que o array `ofertas` abaixo for substituído (curadoria manual ou automática) */
+const DATA_GERACAO_OFERTAS = "13/07/2026 — curadoria manual (3 itens verificados; rodada reduzida por instabilidade técnica do dia, ver README)";
+const ofertas = [
+  {id:1, nome:"Armário Guarda Roupa Organizador Dobrável Desmontável Cor Cinza", plataforma:"Mercado Livre", subnicho:"Organização", de:142.50, por:98.69, desconto:30, comissao:13, avaliacao:4.5, link:"https://meli.la/22uizcr"},
+  {id:2, nome:"Kit 4 Caixas Organizadoras Dobráveis Com Alça Em Couro (HW)", plataforma:"Mercado Livre", subnicho:"Organização", de:129.00, por:60.63, desconto:53, comissao:13, avaliacao:4.7, link:"https://meli.la/2kPEi7w"},
+  {id:3, nome:"Kit 9 Potes Mantimentos Vidro Herméticos Bambu (Epsilon EPS-709)", plataforma:"Mercado Livre", subnicho:"Cozinha", de:179.90, por:97.15, desconto:45, comissao:13, avaliacao:4.8, link:"https://meli.la/2eYVhb2"},
+];
+
+/* ---------- utilidades ---------- */
+const fmtBRL = v => 'R$ ' + (v||0).toLocaleString('pt-BR',{minimumFractionDigits:2, maximumFractionDigits:2});
+const hoje = () => new Date().toISOString().slice(0,10);
+const mesAtual = () => new Date().toISOString().slice(0,7);
+function badgeClass(p){
+  return {Shopee:'shopee','Mercado Livre':'ml',Amazon:'amazon',Magalu:'magalu'}[p] || '';
+}
+function chaveOferta(o){ return o.plataforma + '|' + o.nome; }
+
+/* ---------- navegação de abas ---------- */
+document.getElementById('tabs').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-' + e.target.dataset.tab).classList.add('active');
+  if(e.target.dataset.tab === 'resumo') renderResumo();
+});
+
+document.getElementById('dataAtual').textContent = "Hoje: " + new Date().toLocaleDateString('pt-BR');
+
+/* ---------- PRODUTOS DO DIA ---------- */
+const grid = document.getElementById('grid');
+const selecionadas = new Set(state.selecionados);
+
+function ofertasFiltradas(){
+  const plat = document.getElementById('filtroPlataforma').value;
+  const status = document.getElementById('filtroStatus').value;
+  const ordem = document.getElementById('ordenarPor').value;
+  let lista = ofertas.filter(o=>{
+    if(plat && o.plataforma !== plat) return false;
+    const postado = !!state.postados[chaveOferta(o)];
+    if(status === 'aberto' && postado) return false;
+    if(status === 'postado' && !postado) return false;
+    if(status === 'linkPronto' && !o.link) return false;
+    return true;
+  });
+  if(ordem === 'desconto') lista = [...lista].sort((a,b)=> b.desconto - a.desconto);
+  if(ordem === 'comissao') lista = [...lista].sort((a,b)=> b.comissao - a.comissao);
+  if(ordem === 'por') lista = [...lista].sort((a,b)=> a.por - b.por);
+  return lista;
+}
+function renderProdutos(){
+  grid.innerHTML = '';
+  document.getElementById('dataGeracaoOfertas').textContent = DATA_GERACAO_OFERTAS;
+  ofertasFiltradas().forEach(o=>{
+    const chave = chaveOferta(o);
+    const postado = !!state.postados[chave];
+    const div = document.createElement('div');
+    div.className = 'card' + (selecionadas.has(o.id) ? ' selected' : '') + (o.invalido ? ' invalido' : '');
+    div.innerHTML = `
+      <input type="checkbox" class="check" data-id="${o.id}" ${selecionadas.has(o.id)?'checked':''} ${o.invalido?'disabled':''}>
+      <span class="badge numero">#${o.id}</span>
+      <span class="badge ${badgeClass(o.plataforma)}">${o.plataforma}</span>
+      <span class="badge">${o.subnicho||''}</span>
+      ${o.link ? '<span class="badge" style="background:#1f9d55;color:#fff;">🔗 link pronto</span>' : '<span class="badge" style="background:#d9a441;color:#fff;">link pendente</span>'}
+      ${postado ? '<span class="badge postado">✅ postado</span>' : '<span class="badge" style="background:#f1e9de;color:#8a7f76;">🟡 em aberto</span>'}
+      <div class="nome">${o.nome}</div>
+      <div class="precos"><span class="de">R$ ${o.de.toFixed(2)}</span><span class="por">R$ ${o.por.toFixed(2)}</span></div>
+      <div class="meta">🔥 ${o.desconto}% off · ⭐ ${o.avaliacao} · 💰 ${o.comissao}% comissão</div>
+      ${o.invalido ? `<div class="meta" style="color:#c0392b;font-weight:600;">⚠️ ${o.motivo}</div>` : ''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button type="button" class="ghost togglePostado" data-chave="${chave}">${postado ? 'Desmarcar postado' : 'Marcar como postado'}</button>
+        ${o.link ? `<button type="button" class="ghost copiarLink" data-link="${o.link}">Copiar link</button>` : ''}
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+  document.querySelectorAll('.check').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      const id = parseInt(e.target.dataset.id);
+      if(e.target.checked) selecionadas.add(id); else selecionadas.delete(id);
+      state.selecionados = Array.from(selecionadas);
+      salvar();
+      atualizarBarraProdutos();
+      renderProdutos();
+    });
+  });
+  document.querySelectorAll('.togglePostado').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const chave = e.target.dataset.chave;
+      state.postados[chave] = !state.postados[chave];
+      salvar();
+      renderProdutos();
+    });
+  });
+  document.querySelectorAll('.copiarLink').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      navigator.clipboard.writeText(e.target.dataset.link).then(()=> toast('Link copiado!'));
+    });
+  });
+}
+['filtroPlataforma','filtroStatus','ordenarPor'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', renderProdutos);
+});
+function atualizarBarraProdutos(){
+  document.getElementById('contador').textContent = selecionadas.size + ' ofertas selecionadas';
+  document.getElementById('btnGerar').disabled = selecionadas.size === 0;
+}
+function montarPostWhats(o){
+  const link = o.link || `[LINK PENDENTE — buscar "${o.nome}" na ${o.plataforma}]`;
+  return `🏠 Corre que essa vai rápido!\n*${o.nome}*\n💸 DE: R$ ${o.de.toFixed(2)}\n🔥 POR: R$ ${o.por.toFixed(2)}\n🔗 ${link}\n⚠️ Preço e estoque sujeitos a alteração. #publicidade`;
+}
+function montarPostInsta(o){
+  return `✨ ${o.nome} com ${o.desconto}% OFF!\nPor R$ ${o.por.toFixed(2)} — link na bio 🔗\n#achadinhosdolar #promoção #casa #publicidade`;
+}
+function montarPostTiktok(o){
+  return `${o.nome} caiu de preço 👀 R$ ${o.por.toFixed(2)} — corre no link da bio antes que acabe! #achadinhos #promo #publicidade`;
+}
+document.getElementById('btnGerar').addEventListener('click', ()=>{
+  const lista = ofertas.filter(o=>selecionadas.has(o.id));
+  const outList = document.getElementById('outList');
+  outList.innerHTML = '';
+  lista.forEach(o=>{
+    const chave = chaveOferta(o);
+    const idW = 'w_'+o.id, idI = 'i_'+o.id, idT = 't_'+o.id;
+    const bloco = document.createElement('div');
+    bloco.className = 'chan';
+    bloco.innerHTML = `
+      <h3>#${o.id} — ${o.nome}</h3>
+      <small class="hint">📱 WhatsApp (mensagem separada!)</small>
+      <textarea id="${idW}" readonly>${montarPostWhats(o)}</textarea>
+      <button class="secondary" data-copy="${idW}" data-marcar="${chave}">Copiar WhatsApp</button>
+      <small class="hint" style="margin-top:10px;">📸 Instagram (legenda)</small>
+      <textarea id="${idI}" readonly>${montarPostInsta(o)}</textarea>
+      <button class="secondary" data-copy="${idI}">Copiar Instagram</button>
+      <small class="hint" style="margin-top:10px;">🎵 TikTok (legenda)</small>
+      <textarea id="${idT}" readonly>${montarPostTiktok(o)}</textarea>
+      <button class="secondary" data-copy="${idT}">Copiar TikTok</button>
+    `;
+    outList.appendChild(bloco);
+  });
+  outList.querySelectorAll('button[data-copy]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      copiar(e.target.dataset.copy);
+      const chave = e.target.dataset.marcar;
+      if(chave){
+        state.postados[chave] = true;
+        salvar();
+        renderProdutos();
+        e.target.textContent = 'Copiado ✓ (marcado como postado)';
+      }
+    });
+  });
+  document.getElementById('out').classList.add('show');
+  document.getElementById('out').scrollIntoView({behavior:'smooth'});
+});
+function copiar(idTextarea){
+  const el = document.getElementById(idTextarea);
+  el.select();
+  document.execCommand('copy');
+}
+
+/* ---------- VENDAS ---------- */
+document.getElementById('vData').value = hoje();
+document.getElementById('formVenda').addEventListener('submit', e=>{
+  e.preventDefault();
+  const valor = parseFloat(document.getElementById('vValor').value) || 0;
+  const pct = parseFloat(document.getElementById('vComissaoPct').value) || 0;
+  state.vendas.push({
+    id: Date.now(),
+    data: document.getElementById('vData').value,
+    produto: document.getElementById('vProduto').value,
+    plataforma: document.getElementById('vPlataforma').value,
+    subnicho: document.getElementById('vSubnicho').value,
+    valor,
+    comissaoPct: pct,
+    comissaoValor: +(valor * pct / 100).toFixed(2),
+    status: document.getElementById('vStatus').value
+  });
+  salvar();
+  e.target.reset();
+  document.getElementById('vData').value = hoje();
+  renderVendas();
+  renderFinanceiro();
+  renderResumo();
+});
+function renderVendas(){
+  const tbody = document.querySelector('#tabelaVendas tbody');
+  tbody.innerHTML = '';
+  const ordenadas = [...state.vendas].sort((a,b)=> b.data.localeCompare(a.data));
+  ordenadas.forEach(v=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${new Date(v.data+'T00:00').toLocaleDateString('pt-BR')}</td>
+      <td>${v.produto}</td>
+      <td><span class="badge ${badgeClass(v.plataforma)}">${v.plataforma}</span></td>
+      <td>${v.subnicho||'—'}</td>
+      <td>${fmtBRL(v.valor)}</td>
+      <td>${fmtBRL(v.comissaoValor)} (${v.comissaoPct}%)</td>
+      <td><span class="status-pill status-${v.status}">${v.status === 'pago' ? 'Pago' : 'Pendente'}</span></td>
+      <td><button class="danger" data-id="${v.id}">remover</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('vendasVazio').style.display = state.vendas.length ? 'none' : 'block';
+  tbody.querySelectorAll('.danger').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      state.vendas = state.vendas.filter(v=>v.id !== parseInt(e.target.dataset.id));
+      salvar(); renderVendas(); renderFinanceiro(); renderResumo();
+    });
+  });
+}
+
+/* ---------- FINANCEIRO ---------- */
+function renderFinanceiro(){
+  const pago = state.vendas.filter(v=>v.status==='pago').reduce((s,v)=>s+v.comissaoValor,0);
+  const pendente = state.vendas.filter(v=>v.status==='pendente').reduce((s,v)=>s+v.comissaoValor,0);
+  const bruto = state.vendas.reduce((s,v)=>s+v.valor,0);
+  document.getElementById('finPago').textContent = fmtBRL(pago);
+  document.getElementById('finPendente').textContent = fmtBRL(pendente);
+  document.getElementById('finBruto').textContent = fmtBRL(bruto);
+
+  const porPlataforma = {};
+  state.vendas.forEach(v=>{ porPlataforma[v.plataforma] = (porPlataforma[v.plataforma]||0) + v.comissaoValor; });
+  const max = Math.max(1, ...Object.values(porPlataforma));
+  const cont = document.getElementById('finPorPlataforma');
+  cont.innerHTML = '';
+  Object.entries(porPlataforma).forEach(([p,val])=>{
+    const row = document.createElement('div');
+    row.className = 'hbar-row';
+    row.innerHTML = `<div class="hbar-label">${p}</div><div class="hbar-track"><div class="hbar-fill" style="width:${(val/max*100)}%"></div></div><div class="hbar-value">${fmtBRL(val)}</div>`;
+    cont.appendChild(row);
+  });
+  document.getElementById('finVazio').style.display = state.vendas.length ? 'none' : 'block';
+
+  const porSubnicho = {};
+  state.vendas.forEach(v=>{ const k = v.subnicho || 'Sem sub-nicho'; porSubnicho[k] = (porSubnicho[k]||0) + v.comissaoValor; });
+  const maxSub = Math.max(1, ...Object.values(porSubnicho));
+  const contSub = document.getElementById('finPorSubnicho');
+  contSub.innerHTML = '';
+  Object.entries(porSubnicho).sort((a,b)=>b[1]-a[1]).forEach(([p,val])=>{
+    const row = document.createElement('div');
+    row.className = 'hbar-row';
+    row.innerHTML = `<div class="hbar-label">${p}</div><div class="hbar-track"><div class="hbar-fill" style="width:${(val/maxSub*100)}%"></div></div><div class="hbar-value">${fmtBRL(val)}</div>`;
+    contSub.appendChild(row);
+  });
+  document.getElementById('finSubnichoVazio').style.display = state.vendas.length ? 'none' : 'block';
+}
+
+/* ---------- CRESCIMENTO ---------- */
+document.getElementById('sData').value = hoje();
+document.getElementById('formSeguidores').addEventListener('submit', e=>{
+  e.preventDefault();
+  state.seguidores.push({
+    data: document.getElementById('sData').value,
+    quantidade: parseInt(document.getElementById('sQuantidade').value) || 0
+  });
+  salvar();
+  e.target.reset();
+  document.getElementById('sData').value = hoje();
+  renderCrescimento(); renderResumo();
+});
+function renderCrescimento(){
+  const tbody = document.querySelector('#tabelaSeguidores tbody');
+  tbody.innerHTML = '';
+  const ordenadas = [...state.seguidores].sort((a,b)=> b.data.localeCompare(a.data));
+  ordenadas.forEach((s,i)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${new Date(s.data+'T00:00').toLocaleDateString('pt-BR')}</td><td>${s.quantidade.toLocaleString('pt-BR')}</td><td><button class="danger" data-idx="${i}">remover</button></td>`;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('seguidoresVazio').style.display = state.seguidores.length ? 'none' : 'block';
+  tbody.querySelectorAll('.danger').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const idx = parseInt(e.target.dataset.idx);
+      const alvo = ordenadas[idx];
+      state.seguidores = state.seguidores.filter(s => !(s.data===alvo.data && s.quantidade===alvo.quantidade));
+      salvar(); renderCrescimento(); renderResumo();
+    });
+  });
+
+  const checklistBox = document.getElementById('checklistCrescimento');
+  checklistBox.innerHTML = '';
+  Object.keys(state.checklist).forEach(item=>{
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" ${state.checklist[item] ? 'checked' : ''} data-item="${item}"> ${item}`;
+    checklistBox.appendChild(label);
+  });
+  checklistBox.querySelectorAll('input').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      state.checklist[e.target.dataset.item] = e.target.checked;
+      salvar(); renderResumo();
+    });
+  });
+}
+
+/* ---------- CONFIG ---------- */
+function renderConfig(){
+  const cont = document.getElementById('configAfiliados');
+  cont.innerHTML = '';
+  Object.keys(state.afiliados).forEach(plat=>{
+    const row = document.createElement('div');
+    row.className = 'config-item';
+    row.innerHTML = `<span>${plat}</span><label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);"><input type="checkbox" class="toggle" data-plat="${plat}" ${state.afiliados[plat] ? 'checked':''}> cadastro feito</label>`;
+    cont.appendChild(row);
+  });
+  cont.querySelectorAll('.toggle').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      state.afiliados[e.target.dataset.plat] = e.target.checked;
+      salvar();
+    });
+  });
+}
+
+/* ---------- RESUMO ---------- */
+function renderResumo(){
+  document.getElementById('kpiSelecionadas').textContent = selecionadas.size;
+  const vendasMes = state.vendas.filter(v=>v.data.startsWith(mesAtual()));
+  document.getElementById('kpiVendasMes').textContent = vendasMes.length;
+  const comissaoMes = vendasMes.reduce((s,v)=>s+v.comissaoValor,0);
+  document.getElementById('kpiComissaoMes').textContent = fmtBRL(comissaoMes);
+  const ultimoSeguidores = [...state.seguidores].sort((a,b)=>b.data.localeCompare(a.data))[0];
+  const atual = ultimoSeguidores ? ultimoSeguidores.quantidade : 0;
+  document.getElementById('kpiSeguidores').textContent = atual.toLocaleString('pt-BR');
+  const pct = Math.min(100, (atual / state.metaSeguidores) * 100);
+  document.getElementById('progressoFill').style.width = pct + '%';
+  document.getElementById('progressoTexto').textContent = atual.toLocaleString('pt-BR') + ' / ' + state.metaSeguidores.toLocaleString('pt-BR');
+
+  const checklistBox = document.getElementById('checklistResumo');
+  checklistBox.innerHTML = '';
+  Object.keys(state.checklist).forEach(item=>{
+    const label = document.createElement('label');
+    label.innerHTML = `<input type="checkbox" ${state.checklist[item] ? 'checked' : ''} data-item="${item}"> ${item}`;
+    checklistBox.appendChild(label);
+  });
+  checklistBox.querySelectorAll('input').forEach(cb=>{
+    cb.addEventListener('change', e=>{
+      state.checklist[e.target.dataset.item] = e.target.checked;
+      salvar(); renderCrescimento(); renderResumo();
+    });
+  });
+
+  const insightBox = document.getElementById('insightSubnicho');
+  const porSubnicho = {};
+  state.vendas.forEach(v=>{ const k = v.subnicho || 'Sem sub-nicho'; porSubnicho[k] = (porSubnicho[k]||0) + v.comissaoValor; });
+  const ranking = Object.entries(porSubnicho).sort((a,b)=>b[1]-a[1]);
+  if(ranking.length){
+    const [nome, val] = ranking[0];
+    insightBox.textContent = `💡 Sub-nicho campeão: ${nome} — ${fmtBRL(val)} em comissão registrada até agora. Vale priorizar mais ofertas dessa categoria na curadoria.`;
+    insightBox.style.display = 'block';
+  } else {
+    insightBox.style.display = 'none';
+  }
+}
+
+/* ---------- BACKUP ---------- */
+document.getElementById('btnBackupBaixar').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'achadinhos-backup-' + hoje() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('Backup baixado!');
+});
+document.getElementById('btnBackupRestaurar').addEventListener('click', ()=>{
+  document.getElementById('backupArquivo').click();
+});
+document.getElementById('backupArquivo').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const dados = JSON.parse(reader.result);
+      state = Object.assign(estadoPadrao(), dados);
+      salvar();
+      selecionadas.clear();
+      (state.selecionados||[]).forEach(id=>selecionadas.add(id));
+      renderProdutos();
+      atualizarBarraProdutos();
+      renderVendas();
+      renderFinanceiro();
+      renderCrescimento();
+      renderConfig();
+      renderResumo();
+      toast('Backup restaurado!');
+    }catch(err){
+      toast('Arquivo inválido — não foi possível restaurar.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+});
+
+/* ---------- TROCAR SENHA ---------- */
+document.getElementById('formSenha').addEventListener('submit', e=>{
+  e.preventDefault();
+  const campo = document.getElementById('novaSenha');
+  const valor = campo.value.trim();
+  if(!valor){ toast('Digite uma senha antes de salvar.'); return; }
+  localStorage.setItem('achadinhosSenhaCustom', valor);
+  campo.value = '';
+  toast('Senha atualizada!');
+});
+
+/* ---------- init ---------- */
+renderProdutos();
+atualizarBarraProdutos();
+renderVendas();
+renderFinanceiro();
+renderCrescimento();
+renderConfig();
+renderResumo();
+</script>
+</body>
+</html>
