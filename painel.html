@@ -101,6 +101,11 @@
   .loginBox input{width:100%;margin-bottom:10px;text-align:center;}
   .loginBox button{width:100%;}
   .loginErro{color:#c0392b;font-size:12px;margin-top:8px;display:none;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+  .toolbar select{padding:6px 8px;}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:10000;}
+  #toast.show{opacity:1;}
+  .insight{background:#eef7f1;border:1px solid #cfe9d9;color:#1d5c3a;padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:16px;}
 </style>
 </head>
 <body>
@@ -114,6 +119,8 @@
     <div class="loginErro" id="loginErro">Senha incorreta.</div>
   </div>
 </div>
+
+<div id="toast"></div>
 
 <div id="app" style="display:none">
 <header>
@@ -148,6 +155,8 @@
       <div class="progress-track"><div class="progress-fill" id="progressoFill" style="width:0%"></div></div>
     </div>
 
+    <div class="insight" id="insightSubnicho" style="display:none;"></div>
+
     <div class="panel">
       <h2>Ações da semana</h2>
       <div class="checklist" id="checklistResumo"></div>
@@ -158,8 +167,29 @@
   <!-- PRODUTOS DO DIA -->
   <section class="tab" id="tab-produtos">
     <div class="banner">
-      <strong>Curadoria real.</strong> Ofertas verificadas nas páginas oficiais de Mercado Livre, Shopee e Amazon. Cada card mostra o número (#) e se já foi <span class="badge postado" style="margin:0 2px;">postado</span> ou está em aberto.
+      <strong>Curadoria real.</strong> Última atualização: <span id="dataGeracaoOfertas">—</span>. Cada card mostra o número (#) e se já foi <span class="badge postado" style="margin:0 2px;">postado</span> ou está em aberto.
       <strong>Envie cada oferta como mensagem separada</strong> no WhatsApp — colar duas juntas faz só a primeira gerar preview/imagem do link. Ao clicar "Copiar WhatsApp" de uma oferta, ela já é marcada como postada automaticamente (dá pra desmarcar no card).
+    </div>
+    <div class="toolbar">
+      <select id="filtroPlataforma">
+        <option value="">Todas as plataformas</option>
+        <option value="Mercado Livre">Mercado Livre</option>
+        <option value="Shopee">Shopee</option>
+        <option value="Amazon">Amazon</option>
+        <option value="Magalu">Magalu</option>
+      </select>
+      <select id="filtroStatus">
+        <option value="">Todos os status</option>
+        <option value="aberto">Só em aberto</option>
+        <option value="postado">Só postados</option>
+        <option value="linkPronto">Só com link pronto</option>
+      </select>
+      <select id="ordenarPor">
+        <option value="">Ordem padrão (#)</option>
+        <option value="desconto">Maior desconto</option>
+        <option value="comissao">Maior comissão</option>
+        <option value="por">Menor preço</option>
+      </select>
     </div>
     <div class="grid" id="grid"></div>
     <div class="bar">
@@ -292,14 +322,30 @@
 🔗 [link de afiliado]
 ⚠️ Preço e estoque sujeitos a alteração. #publicidade</textarea>
     </div>
+    <div class="panel">
+      <h2>Backup dos dados</h2>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 12px;">Vendas, seguidores, checklist e status de postado ficam salvos só neste navegador (localStorage). Baixe um backup de vez em quando pra não perder nada.</p>
+      <button class="secondary" id="btnBackupBaixar" type="button">⬇️ Baixar backup (.json)</button>
+      <input type="file" id="backupArquivo" accept="application/json" style="display:none;">
+      <button class="ghost" id="btnBackupRestaurar" type="button" style="margin-left:8px;">⬆️ Restaurar backup</button>
+    </div>
+    <div class="panel">
+      <h2>Segurança do painel</h2>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 12px;">⚠️ Lembrete: essa senha só bloqueia acesso casual — quem vir o código-fonte da página consegue contornar. Não é segurança de verdade, só uma barreira simples.</p>
+      <form class="inline" id="formSenha">
+        <label>Nova senha<input type="text" id="novaSenha" placeholder="Nova senha"></label>
+        <button type="submit" class="primary">Salvar nova senha</button>
+      </form>
+    </div>
   </section>
 </main>
 </div>
 
 <script>
 /* ---------- acesso (aviso: proteção só contra acesso casual — qualquer pessoa que veja o código-fonte encontra a senha; não é segurança de verdade) ---------- */
+const SENHA_PADRAO = "AchadinhosLar2026";
+function senhaAtual(){ return localStorage.getItem('achadinhosSenhaCustom') || SENHA_PADRAO; }
 (function(){
-  const SENHA = "AchadinhosLar2026";
   const gate = document.getElementById('loginGate');
   const app = document.getElementById('app');
   function liberar(){
@@ -313,7 +359,7 @@
   document.getElementById('senhaInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') tentar(); });
   function tentar(){
     const valor = document.getElementById('senhaInput').value;
-    if(valor === SENHA){
+    if(valor === senhaAtual()){
       sessionStorage.setItem('achadinhosAuth', 'ok');
       liberar();
     } else {
@@ -321,6 +367,16 @@
     }
   }
 })();
+
+/* ---------- toast ---------- */
+let toastTimer;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> el.classList.remove('show'), 2200);
+}
 
 /* ---------- estado ---------- */
 const STORAGE_KEY = 'achadinhosDoLarState';
@@ -349,7 +405,9 @@ function carregar(){
 function salvar(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
 let state = carregar();
 
-/* ---------- ofertas curadas em 12/07/2026 ---------- */
+/* ---------- ofertas curadas ---------- */
+/* Atualizar esta linha sempre que o array `ofertas` abaixo for substituído (curadoria manual ou automática) */
+const DATA_GERACAO_OFERTAS = "13/07/2026 — substituição manual (item #3)";
 const ofertas = [
   {id:1, nome:"Panela de Pressão Elétrica Philco PPP01P 6L", plataforma:"Mercado Livre", subnicho:"Cozinha", de:549.90, por:367.00, desconto:33, comissao:13, avaliacao:4.8, link:"https://meli.la/1NsyBL1"},
   {id:2, nome:"Air Fryer Oven Philco 11L 8 Funções PAF11B", plataforma:"Mercado Livre", subnicho:"Cozinha", de:530.45, por:349.00, desconto:34, comissao:13, avaliacao:4.9, link:"https://meli.la/1QzF3vV"},
@@ -398,9 +456,27 @@ document.getElementById('dataAtual').textContent = "Hoje: " + new Date().toLocal
 const grid = document.getElementById('grid');
 const selecionadas = new Set(state.selecionados);
 
+function ofertasFiltradas(){
+  const plat = document.getElementById('filtroPlataforma').value;
+  const status = document.getElementById('filtroStatus').value;
+  const ordem = document.getElementById('ordenarPor').value;
+  let lista = ofertas.filter(o=>{
+    if(plat && o.plataforma !== plat) return false;
+    const postado = !!state.postados[chaveOferta(o)];
+    if(status === 'aberto' && postado) return false;
+    if(status === 'postado' && !postado) return false;
+    if(status === 'linkPronto' && !o.link) return false;
+    return true;
+  });
+  if(ordem === 'desconto') lista = [...lista].sort((a,b)=> b.desconto - a.desconto);
+  if(ordem === 'comissao') lista = [...lista].sort((a,b)=> b.comissao - a.comissao);
+  if(ordem === 'por') lista = [...lista].sort((a,b)=> a.por - b.por);
+  return lista;
+}
 function renderProdutos(){
   grid.innerHTML = '';
-  ofertas.forEach(o=>{
+  document.getElementById('dataGeracaoOfertas').textContent = DATA_GERACAO_OFERTAS;
+  ofertasFiltradas().forEach(o=>{
     const chave = chaveOferta(o);
     const postado = !!state.postados[chave];
     const div = document.createElement('div');
@@ -416,7 +492,10 @@ function renderProdutos(){
       <div class="precos"><span class="de">R$ ${o.de.toFixed(2)}</span><span class="por">R$ ${o.por.toFixed(2)}</span></div>
       <div class="meta">🔥 ${o.desconto}% off · ⭐ ${o.avaliacao} · 💰 ${o.comissao}% comissão</div>
       ${o.invalido ? `<div class="meta" style="color:#c0392b;font-weight:600;">⚠️ ${o.motivo}</div>` : ''}
-      <button type="button" class="ghost togglePostado" data-chave="${chave}">${postado ? 'Desmarcar postado' : 'Marcar como postado'}</button>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button type="button" class="ghost togglePostado" data-chave="${chave}">${postado ? 'Desmarcar postado' : 'Marcar como postado'}</button>
+        ${o.link ? `<button type="button" class="ghost copiarLink" data-link="${o.link}">Copiar link</button>` : ''}
+      </div>
     `;
     grid.appendChild(div);
   });
@@ -438,7 +517,15 @@ function renderProdutos(){
       renderProdutos();
     });
   });
+  document.querySelectorAll('.copiarLink').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      navigator.clipboard.writeText(e.target.dataset.link).then(()=> toast('Link copiado!'));
+    });
+  });
 }
+['filtroPlataforma','filtroStatus','ordenarPor'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', renderProdutos);
+});
 function atualizarBarraProdutos(){
   document.getElementById('contador').textContent = selecionadas.size + ' ofertas selecionadas';
   document.getElementById('btnGerar').disabled = selecionadas.size === 0;
@@ -676,7 +763,73 @@ function renderResumo(){
       salvar(); renderCrescimento(); renderResumo();
     });
   });
+
+  const insightBox = document.getElementById('insightSubnicho');
+  const porSubnicho = {};
+  state.vendas.forEach(v=>{ const k = v.subnicho || 'Sem sub-nicho'; porSubnicho[k] = (porSubnicho[k]||0) + v.comissaoValor; });
+  const ranking = Object.entries(porSubnicho).sort((a,b)=>b[1]-a[1]);
+  if(ranking.length){
+    const [nome, val] = ranking[0];
+    insightBox.textContent = `💡 Sub-nicho campeão: ${nome} — ${fmtBRL(val)} em comissão registrada até agora. Vale priorizar mais ofertas dessa categoria na curadoria.`;
+    insightBox.style.display = 'block';
+  } else {
+    insightBox.style.display = 'none';
+  }
 }
+
+/* ---------- BACKUP ---------- */
+document.getElementById('btnBackupBaixar').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'achadinhos-backup-' + hoje() + '.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast('Backup baixado!');
+});
+document.getElementById('btnBackupRestaurar').addEventListener('click', ()=>{
+  document.getElementById('backupArquivo').click();
+});
+document.getElementById('backupArquivo').addEventListener('change', e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const dados = JSON.parse(reader.result);
+      state = Object.assign(estadoPadrao(), dados);
+      salvar();
+      selecionadas.clear();
+      (state.selecionados||[]).forEach(id=>selecionadas.add(id));
+      renderProdutos();
+      atualizarBarraProdutos();
+      renderVendas();
+      renderFinanceiro();
+      renderCrescimento();
+      renderConfig();
+      renderResumo();
+      toast('Backup restaurado!');
+    }catch(err){
+      toast('Arquivo inválido — não foi possível restaurar.');
+    }
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+});
+
+/* ---------- TROCAR SENHA ---------- */
+document.getElementById('formSenha').addEventListener('submit', e=>{
+  e.preventDefault();
+  const campo = document.getElementById('novaSenha');
+  const valor = campo.value.trim();
+  if(!valor){ toast('Digite uma senha antes de salvar.'); return; }
+  localStorage.setItem('achadinhosSenhaCustom', valor);
+  campo.value = '';
+  toast('Senha atualizada!');
+});
 
 /* ---------- init ---------- */
 renderProdutos();
