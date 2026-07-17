@@ -466,27 +466,28 @@ let state = carregar();
 
 /* ---------- ofertas curadas ---------- */
 /* Atualizar esta linha sempre que o array `ofertas` abaixo for substituído (curadoria manual ou automática) */
-const DATA_GERACAO_OFERTAS = "13/07/2026 08:00 — curadoria automática da manhã (8h) — 19 ofertas, todas com link real";
+const DATA_GERACAO_OFERTAS = "17/07/2026 08:00 — curadoria automática da manhã (8h) — 20 ofertas Mercado Livre, todas com link real";
 const ofertas = [
-  {id:1, nome:"Cortina Blackout 3,00x2,50m Corta-Luz Tecido Grosso Cinza — Casa Laura", plataforma:"Mercado Livre", subnicho:"Decoração", de:139.21, por:72.90, desconto:47, comissao:13, avaliacao:4.7, link:"https://meli.la/1uZP4qh"},
-  {id:2, nome:"Jogo de Panelas Antiaderente Cerâmica 10 Peças Mármore — Mimo Style", plataforma:"Mercado Livre", subnicho:"Cozinha", de:645.00, por:425.00, desconto:34, comissao:13, avaliacao:4.8, link:"https://meli.la/2uBF76d"},
-  {id:3, nome:"Jogo de Panelas Cerâmico Triplo Indução Ecoglid 5 Peças Baunilha — Tuut", plataforma:"Mercado Livre", subnicho:"Cozinha", de:529.99, por:256.99, desconto:51, comissao:13, avaliacao:4.8, link:"https://meli.la/2G5uCeK"},
-  {id:4, nome:"Cesto Organizador de Roupa Bambu Dobrável c/ Tampa 72L — Camperluz", plataforma:"Mercado Livre", subnicho:"Organização", de:119.00, por:59.50, desconto:50, comissao:13, avaliacao:4.9, link:"https://meli.la/15Uxgp3"},
-  {id:5, nome:"Guarda-Roupa Cabideiro Organizador Closet Aberto 10 Prateleiras — Irsina", plataforma:"Mercado Livre", subnicho:"Organização", de:199.90, por:132.99, desconto:33, comissao:13, avaliacao:4.7, link:"https://meli.la/19LaMnd"},
-  {id:6, nome:"Kit 3 Organizadores de Geladeira Alimentos c/ Tampas — Link Buy", plataforma:"Mercado Livre", subnicho:"Cozinha", de:49.00, por:36.67, desconto:25, comissao:13, avaliacao:4.8, link:"https://meli.la/241NJ7R"},
-  {id:7, nome:"Caneca Kit Garrafa Térmica Vacuum Inox 500ml + 3 Xícaras", plataforma:"Mercado Livre", subnicho:"Cozinha", de:50.70, por:38.02, desconto:25, comissao:13, avaliacao:4.6, link:"https://meli.la/1FdKDzX"},
-  {id:8, nome:"Pano Multiuso Perfex Picotado 600 Panos Azul", plataforma:"Mercado Livre", subnicho:"Cuidado da Casa", de:72.97, por:46.00, desconto:36, comissao:13, avaliacao:4.8, link:"https://meli.la/1sK7mMz"},
-  {id:9, nome:"Saco de Lavar Tênis e Calçados na Máquina", plataforma:"Mercado Livre", subnicho:"Cuidado da Casa e Lavanderia", de:41.93, por:25.00, desconto:40, comissao:13, avaliacao:4.6, link:"https://meli.la/1dPJD7T"},
-  {id:10, nome:"Mini Ventilador Soprador de Ar Turbo Recarregável USB — Davely", plataforma:"Mercado Livre", subnicho:"Utilidades Domésticas", de:96.00, por:44.70, desconto:53, comissao:13, avaliacao:4.8, link:"https://meli.la/1WLooGX"},
-  {id:11, nome:"Lâmpada Led com Ventilador de Teto 80w E27 c/ Controle Bivolt", plataforma:"Mercado Livre", subnicho:"Iluminação Residencial", de:100.00, por:38.00, desconto:62, comissao:13, avaliacao:4.7, link:"https://meli.la/1R7eMgW"},
-  {id:12, nome:"4 Travesseiros Antialérgico Impermeável 50x70 Super Macio — Fassini", plataforma:"Mercado Livre", subnicho:"Cama", de:159.90, por:118.79, desconto:26, comissao:13, avaliacao:4.7, link:"https://meli.la/1N8Rsqf"},
-  {id:13, nome:"Colchão Emma Original Casal — Tecnologia Alemã", plataforma:"Mercado Livre", subnicho:"Cama", de:5369.00, por:2049.00, desconto:62, comissao:13, avaliacao:4.8, link:"https://meli.la/1iUdpQA"},
-  {id:14, nome:"Kit Balcão de Cozinha p/ Pia e Cooktop Veneza MP2384 — Multimóveis", plataforma:"Mercado Livre", subnicho:"Móveis", de:888.88, por:547.46, desconto:38, comissao:13, avaliacao:4.5, link:"https://meli.la/2imJLwK"},
-  {id:15, nome:"Roçadeira Lateral a Gasolina 4 em 1 52cc c/ Acessórios — The Black Tools", plataforma:"Mercado Livre", subnicho:"Jardim", de:1075.00, por:659.90, desconto:39, comissao:13, avaliacao:4.6, link:"https://meli.la/1HnZJNF"},
-  {id:16, nome:"Soprador de Folhas Lateral Fak260S 26cc a Gasolina — Carbon Fak", plataforma:"Mercado Livre", subnicho:"Jardim", de:587.87, por:359.00, desconto:39, comissao:13, avaliacao:4.7, link:"https://meli.la/1iBWNZj"},
-  {id:17, nome:"Câmera IP A8 App iCSee Externa Wifi HD Prova D'água — icarbonx", plataforma:"Mercado Livre", subnicho:"Casa Inteligente", de:175.04, por:83.59, desconto:52, comissao:13, avaliacao:4.7, link:"https://meli.la/31jk4YM"},
-  {id:18, nome:"Câmera Intelbras IM1 Full HD 2MP Wifi c/ Alerta de Movimento", plataforma:"Mercado Livre", subnicho:"Casa Inteligente", de:219.00, por:149.90, desconto:31, comissao:13, avaliacao:4.8, link:"https://meli.la/2Ajf3DE"},
-  {id:19, nome:"Câmera Segurança IP Externa Wifi A28 App iCSee 4K Prova D'água", plataforma:"Mercado Livre", subnicho:"Casa Inteligente", de:200.00, por:128.91, desconto:36, comissao:13, avaliacao:4.8, link:"https://meli.la/1sKws3u"},
+  {id:1, nome:"Penteadeira Ditália Pe80 c/ Kit Luz Branco", plataforma:"Mercado Livre", subnicho:"Móveis", de:1099.00, por:699.00, desconto:36, comissao:13, avaliacao:4.7, link:"https://meli.la/2BsVSJo"},
+  {id:2, nome:"Travesseiro Cervical Nasa Coluna Relax Carvão Ativado — I Wanna Sleep", plataforma:"Mercado Livre", subnicho:"Cama", de:259.00, por:181.00, desconto:30, comissao:13, avaliacao:4.7, link:"https://meli.la/137H3q5"},
+  {id:3, nome:"Kit 10 Potes de Vidro Marmita Hermético 370ml — Rishon", plataforma:"Mercado Livre", subnicho:"Cozinha", de:140.00, por:66.00, desconto:52, comissao:13, avaliacao:4.8, link:"https://meli.la/23LMe82"},
+  {id:4, nome:"Cobertor Casal Dupla Face Manta Sherpa Luxo — Dhalishop", plataforma:"Mercado Livre", subnicho:"Cama", de:199.00, por:84.21, desconto:58, comissao:13, avaliacao:4.6, link:"https://meli.la/2NnAAeP"},
+  {id:5, nome:"Kit 10 Potes de Vidro 640ml Borossilicato 4 Travas — Seiri", plataforma:"Mercado Livre", subnicho:"Cozinha", de:164.80, por:110.00, desconto:33, comissao:13, avaliacao:4.9, link:"https://meli.la/14WhViQ"},
+  {id:6, nome:"Lixeira Inteligente 16L Sensor Automático Tampa Touch — Magno", plataforma:"Mercado Livre", subnicho:"Utilidades Domésticas", de:148.00, por:63.90, desconto:56, comissao:13, avaliacao:4.8, link:"https://meli.la/12xfSbe"},
+  {id:7, nome:"Jogo de Toalhas Buddemeyer Atena Banho 4 Peças", plataforma:"Mercado Livre", subnicho:"Banho/Têxteis", de:289.90, por:199.90, desconto:31, comissao:13, avaliacao:4.9, link:"https://meli.la/21AsPbB"},
+  {id:8, nome:"Torneira Cozinha Gourmet Bancada Flexível Monocomando B22-Black", plataforma:"Mercado Livre", subnicho:"Cozinha", de:229.00, por:115.51, desconto:50, comissao:13, avaliacao:4.7, link:"https://meli.la/21pgzbC"},
+  {id:9, nome:"Conjunto de Panelas Antiaderente 10 Peças Coffee Cappuccino — Imperial", plataforma:"Mercado Livre", subnicho:"Cozinha", de:331.42, por:196.99, desconto:41, comissao:13, avaliacao:4.6, link:"https://meli.la/2DktmKP"},
+  {id:10, nome:"Kit 4 Cadeiras Gruvyer Empilháveis Cozinha/Jantar", plataforma:"Mercado Livre", subnicho:"Móveis", de:499.77, por:349.99, desconto:30, comissao:13, avaliacao:4.7, link:"https://meli.la/2Xwc38U"},
+  {id:11, nome:"Colchão Solteiro ProRelax Turquesa 88x188 D33", plataforma:"Mercado Livre", subnicho:"Cama", de:619.99, por:408.00, desconto:34, comissao:13, avaliacao:4.7, link:"https://meli.la/1hZgwx3"},
+  {id:12, nome:"Câmera Inteligente Intelbras iM7+ 3MP Branca", plataforma:"Mercado Livre", subnicho:"Casa Inteligente", de:749.00, por:429.00, desconto:43, comissao:13, avaliacao:4.9, link:"https://meli.la/2utNUKw"},
+  {id:13, nome:"Ralo Linear 15x100 Pluvial Grelha c/ Suporte (2 pçs) — RR Grelhas", plataforma:"Mercado Livre", subnicho:"Banheiro", de:78.90, por:51.27, desconto:35, comissao:13, avaliacao:4.7, link:"https://meli.la/29TdMK7"},
+  {id:14, nome:"Tira Manchas Vanish Pro Line Líquido 5L", plataforma:"Mercado Livre", subnicho:"Lavanderia", de:112.49, por:58.19, desconto:48, comissao:13, avaliacao:4.9, link:"https://meli.la/2upCC24"},
+  {id:15, nome:"Guarda-roupa 4 Portas Huntano Branco — Notável", plataforma:"Mercado Livre", subnicho:"Móveis", de:873.99, por:572.76, desconto:34, comissao:13, avaliacao:4.5, link:"https://meli.la/1RATFzs"},
+  {id:16, nome:"Conjunto de Panelas 10 Peças Cook Marmol — Mimo Style", plataforma:"Mercado Livre", subnicho:"Cozinha", de:699.90, por:355.00, desconto:49, comissao:13, avaliacao:4.7, link:"https://meli.la/2shNWzD"},
+  {id:17, nome:"Roçadeira a Gasolina 52cc Lateral 4 em 1 c/ Acessórios — Mestri DW-402", plataforma:"Mercado Livre", subnicho:"Jardim", de:899.99, por:399.97, desconto:56, comissao:13, avaliacao:4.5, link:"https://meli.la/2enYUbD"},
+  {id:18, nome:"Gabinete de Pia 1,20m Balcão de Cozinha 3 Portas Branco — IRM", plataforma:"Mercado Livre", subnicho:"Cozinha", de:489.00, por:299.89, desconto:39, comissao:13, avaliacao:4.5, link:"https://meli.la/16k1jyh"},
+  {id:19, nome:"Fechadura Digital Biométrica Kuanttum Delta PRO WiFi App Tuya", plataforma:"Mercado Livre", subnicho:"Casa Inteligente", de:499.98, por:369.89, desconto:26, comissao:13, avaliacao:4.9, link:"https://meli.la/1iRCWvU"},
+  {id:20, nome:"Kit 30 Cabides de Madeira c/ Barra Antideslizante — Kontuz", plataforma:"Mercado Livre", subnicho:"Organização", de:164.43, por:119.90, desconto:27, comissao:13, avaliacao:4.9, link:"https://meli.la/1RwBocR"},
 ];
 
 /* ---------- utilidades ---------- */
